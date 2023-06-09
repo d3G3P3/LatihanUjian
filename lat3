@@ -1,0 +1,833 @@
+#include <iostream>
+#include <conio.h>
+#include <Windows.h>
+#include <string>
+#include <iomanip>
+#include <fstream>
+#include <ctime>
+using namespace std;
+
+struct user1
+{
+	string nama;
+	string pesanan[100];
+	string paket[100];
+	int jumlahpesanan;
+	int total[100];
+	int totharga[100];
+	int totfix;
+	int totlast;
+	int nominal;
+	int kembalian;
+};
+
+
+struct car
+{
+	string nama_product;
+	string paket[3];
+	int stock;
+	int harga[3];
+};
+
+car mobil[100];
+
+struct data12
+{
+	user1 pembeli[100];
+	string hari;
+	int menu[100];
+	int total[100];
+	int totaldonasi;
+	int jumlah_user;
+};
+
+data12 yolo[7];
+
+string harii[7]
+{
+	"Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"
+};
+
+string produkawal[3]
+{
+	"Avanza", "Fortuner", "Pajero"
+};
+
+string proket[3]
+{
+	"Paket 1 Tahun", "Paket 3 Tahun", "Paket 5 Tahun"
+};
+
+int harga_awal[3]
+{
+	120000,150000,200000
+};
+
+string password1 = "123";
+string pass;
+bool user = false,pengurus = false, admin = false, superadmin = false, ulang = false , outt = false;
+int x,y,z,jumpemesan= 0,m;
+int jumlah_menu = 3;
+
+void masuk_data()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		mobil[i].nama_product = produkawal[i];
+		mobil[i].stock = 10;
+		for (int j = 0; j < 3; j++)
+		{
+			mobil[i].paket[j] = proket[j];
+		}
+		mobil[i].harga[1] = harga_awal[i];
+		mobil[i].harga[0] = mobil[i].harga[1] * 1.3;
+		mobil[i].harga[2] = mobil[i].harga[1] * 0.7;
+	}
+	for (int j = 0; j < 7; j++)
+	{
+		yolo[j].hari = harii[j];
+	}
+}
+
+void konversi( int a)
+{
+	mobil[a].harga[0] = mobil[a].harga[1] * 1.3;
+	mobil[a].harga[2] = mobil[a].harga[1] * 0.7;
+}
+
+void tampilan_biasa()
+{
+	cout << setw(20) << left << "Produk" << setw(40) << left << "Paket" << setw(30) << left << "Harga" << endl;
+	for (int i = 0; i < jumlah_menu; i++)
+	{
+		cout << setw(20) << left << mobil[i].nama_product << endl;
+		for (int j = 0 ; j < 3; j++)
+		{
+			cout << setw(20) << left <<" " << proket[j] << setw(25) << left<< " " << "Rp " + to_string(mobil[i].harga[j]) << endl;
+		}
+		cout << "\n\n";
+	}
+}
+
+void tampilan_Menu()
+{
+	cout << setw(20) << left << "Produk" << setw(20) << left <<"Stock" << "Harga Normal" << endl;
+	for (int i = 0; i < jumlah_menu; i++)
+	{
+		cout << i+1 << ". " << setw(17) << left <<  mobil[i].nama_product <<setw(20)<<left<< mobil[i].stock << mobil[i].harga[1] << endl;
+	}
+}
+
+void tampilan_login()
+{
+awal:
+	int input;
+	cout << "------------------------------------------\n";
+	cout << " Latihan Broo\n";
+	cout << "------------------------------------------\n";
+	cout << "pilih :\n";
+	cout << "1. Pembeli\n";
+	cout << "2. Karyawan\n";
+	cout << "------------------------------------------\n";
+	cout << "Pilih :\n";
+	cin >> input;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (input > 0 && input < 3)
+		{
+			ulang = false;
+			if (input == 1)
+			{
+				user = true;
+				pengurus = false;
+			}
+			else if (input == 2)
+			{
+				user = false;
+				pengurus = true;
+			}
+		}
+		else
+		{
+			ulang = true;
+		}
+	}
+}
+
+void tampilan_loginkaryawan()
+{awal:
+	char password;
+
+	cout << "------------------------------------------\n";
+	cout << " Login admin / super admin\n";
+	cout << "------------------------------------------\n";
+	cout << "masukkan password :\n";
+	while (true)
+	{
+		password = _getch();   // agar input tidak ditampikan di terminal
+
+
+		if (password == '\r')  //  \r itu merpukan tombol enter pada keyborad
+		{
+			break;
+		}
+		else if (password == '\b') // \b merupakan tombol backspace
+		{
+			if (pass.length() > 0)
+			{
+				pass.pop_back(); //untuk menghapus karakter terakhir
+				cout << "\b \b";
+			}
+
+		}
+		else
+		{
+			pass.push_back(password); //setiap char yang dimasukkan atau diinputkan akan dipindahkan ke variabel pass
+			cout << "*";
+		}
+	}
+	if (pass == password1)
+	{
+		admin = true;
+		superadmin = false;
+	}
+	else
+	{
+		pass = "";
+		system("CLS");
+		cout << " Maaf username atau password salah \n";
+		cout << " Silahkan masukkan username dan password lagi  \n\n\n";
+		goto awal;
+	}
+}
+
+void memilih_hari()
+{
+	m = 0;
+	awal:
+	cout << "------------------------------------------\n";
+	cout << " HARI SIMULASI\n";
+	cout << "------------------------------------------\n";
+	for (int i = 0; i < 7; i++)
+	{
+
+		cout << i+1 << ". " + yolo[i].hari << endl;
+
+	}
+	cout << "------------------------------------------\n";
+	cout << "Pilih hari : \n";
+	cin >> x;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	
+	else
+	{
+		if (x > 0 && x < 8)
+		{
+			x = x - 1;
+		}
+	}
+	system("CLS");
+}
+
+void memilih_produk()
+{
+awal:
+	cout << "------------------------------------------\n";
+	cout << " Produk yang tersedia\n";
+	cout << "------------------------------------------\n";
+	cout << setw(26) << left << "Nama" << "Stock" << endl;
+	for (int i = 0; i < jumlah_menu; i++)
+	{
+		cout << i + 1 << setw(25) << left << ". " + mobil[i].nama_product << mobil[i].stock << endl;
+	}
+	cout << "Pilih produk : \n";
+	cin >> y;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (y > 0 && y < jumlah_menu+1)
+		{
+			y = y - 1;
+			yolo[x].pembeli[yolo[x].jumlah_user].pesanan[m] = mobil[y].nama_product;
+		}
+		else
+		{
+			cout << "\n\n Maaf input anda tidak valid\n";
+			goto awal;
+		}
+	}
+	system("CLS");
+}
+
+void memilih_paket()
+{
+awal:
+	char perulangan;
+	int jum;
+	cout << "------------------------------------------\n";
+	cout << yolo[x].pembeli[yolo[x].jumlah_user].pesanan[m] <<endl;
+	cout << "------------------------------------------\n";
+	cout << " Paket yang tersedia\n";
+	cout << "------------------------------------------\n";
+	cout << setw(26) << left << "Nama Paket" << "Harga" << endl;
+	for (int i = 0; i < 3; i++)
+	{
+		cout << i + 1 << setw(25) << left << ". " + proket[i] << "Rp " << mobil[y].harga[i] << endl;
+	}
+	cout << "Pilih produk : \n";
+	cin >> z;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (z > 0 && z < 4)
+		{
+			z = z - 1;
+			yolo[x].pembeli[yolo[x].jumlah_user].paket[m] = proket[z];
+		}
+		else
+		{
+			system("CLS");
+			cout << "\n\n Maaf input anda tidak valid\n";
+			goto awal;
+		}
+		cout << " \n\n\n\n\n";
+	}
+lagi:
+	cout << "Porduk : "<< yolo[x].pembeli[yolo[x].jumlah_user].pesanan[m] <<endl;
+	cout << "Stock yang ada : " << mobil[y].stock<< endl;
+	cout << "Jumlah yang akan dipesan : ";
+	cin >> jum;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (jum <= mobil[y].stock)
+		{
+			yolo[x].pembeli[yolo[x].jumlah_user].total[m] = jum;
+			mobil[y].stock -= jum;
+			yolo[x].pembeli[yolo[x].jumlah_user].totharga[m] = yolo[x].pembeli[yolo[x].jumlah_user].total[m] * mobil[y].harga[z];
+			yolo[x].pembeli[yolo[x].jumlah_user].totfix += yolo[x].pembeli[yolo[x].jumlah_user].totharga[m];
+		}
+		else 
+		{
+			system("CLS");
+			cout << "\n\n Maaf stock kurang\n\n\n";
+			goto lagi;
+		}
+		m++;
+		yolo[x].pembeli[yolo[x].jumlah_user].jumlahpesanan = m;
+	}
+	lagi2:
+	system("CLS");
+	cout << "\n\nApakah anda ingin mengulang ? (y/t): ";
+	cin >> perulangan;
+	if (perulangan == 'y' || perulangan == 'Y')
+	{
+		system("CLS");
+		ulang = true;
+		
+	}
+	else if (perulangan == 't' || perulangan == 'T')
+	{
+		ulang = false;
+		cout << "----------------------------------------\n";
+		cout << "Atas nama: \n";
+		cin.ignore();
+		getline(cin, yolo[x].pembeli[yolo[x].jumlah_user].nama);
+		system("CLS");
+	}
+	else
+	{
+		cout << "\n\n Maaf input anda tidak valid\n";
+		goto lagi2;
+	}
+}
+
+void pembayaran()
+{
+	int selisih = 0;
+	cout << "------------------------------------------\n";
+	cout << " Pembayaran\n";
+	cout << "------------------------------------------\n";
+	cout << setw(30) << left << "Produk yang dipesan" << setw(30) << left << "Paket" << "jumlah" << endl;
+	for (int i = 0; i < m; i++)
+	{
+		cout << setw(30) << left << yolo[x].pembeli[yolo[x].jumlah_user].pesanan[i] << setw(30) << left << yolo[x].pembeli[yolo[x].jumlah_user].paket[i] << yolo[x].pembeli[yolo[x].jumlah_user].total[i] << endl;
+	}
+	cout << "\n\nTotal : Rp" << yolo[x].pembeli[yolo[x].jumlah_user].totfix;
+ulang1:
+	cout << "\n======================================================" << endl;
+	cout << "Masukkan nominal : Rp";
+	cin >> yolo[x].pembeli[yolo[x].jumlah_user].nominal;
+	cout << "======================================================" << endl;
+	if (yolo[x].pembeli[yolo[x].jumlah_user].nominal >= yolo[x].pembeli[yolo[x].jumlah_user].totfix)
+	{
+		selisih = yolo[x].pembeli[yolo[x].jumlah_user].nominal - yolo[x].pembeli[yolo[x].jumlah_user].totfix;
+		yolo[x].pembeli[yolo[x].jumlah_user].kembalian = selisih;
+		if (selisih > 0)
+		{
+			cout << "Silahkan ambil kembalian anda : Rp" << selisih << endl;
+
+		}
+		else
+		{
+			cout << "Uang anda pas\n";
+		}
+	}
+	else
+	{
+		system("CLS");
+		cout << "Maaf uang anda kurang " << endl;
+		cout << "Masukkan nomial yang sesuai dengan harga\n\n";
+		goto ulang1;
+	}
+	Sleep(2000);
+	system("CLS");
+}
+
+void stuk_sementara()
+{
+	cout << "======================================================" << endl;
+	cout << "                       Pembayaran                     " << endl;
+	cout << "======================================================" << endl;
+	cout << "= " << yolo[x].pembeli[yolo[x].jumlah_user].nama << endl;
+	cout << "======================================================" << endl;
+	cout << "=                      Pesanan                       =" << endl;
+	cout << "======================================================" << endl;
+	cout << setw(30) << left << "Produk yang dipesan" << setw(30) << left << "Paket" << "jumlah" << endl;
+	for (int i = 0; i < yolo[x].pembeli[yolo[x].jumlah_user].jumlahpesanan; i++)
+	{
+		cout << setw(30) << left << yolo[x].pembeli[yolo[x].jumlah_user].pesanan[i] << setw(30) << left << yolo[x].pembeli[jumpemesan].paket[i] << yolo[x].pembeli[jumpemesan].total[i] << endl;
+	}
+	cout << "\n\nTotal : Rp" << yolo[x].pembeli[yolo[x].jumlah_user].totfix;
+	cout << "\nNominal : Rp " << yolo[x].pembeli[yolo[x].jumlah_user].nominal << endl;
+	cout << "----------------------------------------\n";
+	cout << "Kembalian : Rp " << yolo[x].pembeli[yolo[x].jumlah_user].kembalian << endl;
+
+	Sleep(5000);
+	yolo[x].jumlah_user++;
+	system("CLS");
+}
+
+void cetak_sementara(int a, int b)
+{
+	cout << "======================================================" << endl;
+	cout << "                       Pembayaran                     " << endl;
+	cout << "======================================================" << endl;
+	cout << "= " << yolo[a].pembeli[b].nama << endl;
+	cout << "======================================================" << endl;
+	cout << "=                      Pesanan                       =" << endl;
+	cout << "======================================================" << endl;
+	cout << setw(30) << left << "Produk yang dipesan" << setw(30) << left << "Paket" << "jumlah" << endl;
+	for (int i = 0; i < yolo[a].pembeli[b].jumlahpesanan; i++)
+	{
+		cout << setw(30) << left << yolo[a].pembeli[b].pesanan[i] << setw(30) << left << yolo[a].pembeli[b].paket[i] << yolo[a].pembeli[b].total[i] << endl;
+	}
+	cout << "\n\nTotal : Rp" << yolo[a].pembeli[b].totfix;
+	cout << "\nNominal : Rp " << yolo[a].pembeli[b].nominal << endl;
+	cout << "----------------------------------------\n";
+	cout << "Kembalian : Rp " << yolo[a].pembeli[b].kembalian << endl;
+
+	Sleep(5000);
+	system("CLS");
+}
+
+void tambah_menu()
+{
+awal:
+	char perulangan;
+	cin.ignore();
+	cout << "------------------------------------------\n";
+	cout << " Tambah Menu\n";
+	cout << "------------------------------------------\n";
+	cout << "Masukkan Nama produk : \n";
+	getline(cin, mobil[jumlah_menu].nama_product);
+	cout << "------------------------------------------\n";
+	cout << "Masukkan Harga produk (paket 3 tahun) : \n";
+	cin >> mobil[jumlah_menu].harga[1];
+	konversi(jumlah_menu);
+	for (int i = 0; i < 3; i++)
+	{
+		mobil[jumlah_menu].paket[i] = proket[i];
+	}
+	cout << "------------------------------------------\n";
+	cout << "Masukkan Stock : \n";
+	cin >> mobil[jumlah_menu].stock;
+	jumlah_menu++;
+	system("CLS");
+	tampilan_Menu();
+	cout << "\n\nApakah anda ingin mengulang ? (y/t): ";
+	cin >> perulangan;
+	if (perulangan == 'y' || perulangan == 'Y')
+	{
+		system("CLS");
+		goto awal;
+		ulang = false;
+	}
+	else if (perulangan == 't' || perulangan == 'T')
+	{
+		ulang = true;
+	}
+	else
+	{
+		cout << "\n\n Maaf input anda tidak valid\n";
+		goto awal;
+	}
+
+}
+
+void urut(int a,  int b)
+{
+		for (int j = a; j < b; j++)
+		{ 
+			int har1, har2, har3, stck;
+			string name;
+
+			name = mobil[j].nama_product;
+			har1 = mobil[j].harga[0];
+			har2 = mobil[j].harga[1];
+			har3 = mobil[j].harga[2];
+			stck = mobil[j].stock;
+
+
+			mobil[j].nama_product = mobil[j + 1].nama_product;
+			mobil[j].harga[0] = mobil[j + 1].harga[0];
+			mobil[j].harga[1] = mobil[j + 1].harga[1];
+			mobil[j].harga[2] = mobil[j + 1].harga[2];
+			mobil[j].stock = mobil[j + 1].stock;
+
+
+			mobil[j + 1].nama_product = name;
+			mobil[j + 1].harga[0] = har1;
+			mobil[j + 1].harga[1] = har2;
+			mobil[j + 1].harga[2] = har3;
+			mobil[j + 1].stock = stck;
+		}
+	
+}
+
+void hapus()
+{
+awal:
+	char perulangan;
+	int pilih;
+	tampilan_Menu();
+	cout << "------------------------------------------\n";
+	cout << " Hapus Menu\n";
+	cout << "------------------------------------------\n";
+	cout << "Pilih nomor produk : \n";
+	cin >> pilih;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (pilih > 0 && pilih < jumlah_menu+1)
+		{
+			mobil[pilih-1].nama_product = "";
+			mobil[pilih-1].harga[0] = 0;
+			mobil[pilih-1].harga[1] = 0;
+			mobil[pilih-1].harga[2] = 0;
+			mobil[pilih-1].stock = 0;
+			urut(pilih-1, jumlah_menu);
+			jumlah_menu--;
+			system("CLS");
+			tampilan_Menu();
+		}
+	}
+	cout << "\n\nApakah anda ingin mengulang ? (y/t): ";
+	cin >> perulangan;
+	if (perulangan == 'y' || perulangan == 'Y')
+	{
+		ulang = false;
+		system("CLS");
+		goto awal;
+		
+	}
+	else if (perulangan == 't' || perulangan == 'T')
+	{
+		ulang = true;
+	}
+	else
+	{
+		cout << "\n\n Maaf input anda tidak valid\n";
+		goto awal;
+	}
+
+}
+
+void edit_stock()
+{
+awal:
+	char perulangan;
+	int pilih;
+	tampilan_Menu();
+	cout << "------------------------------------------\n";
+	cout << " Edit stock menu\n";
+	cout << "------------------------------------------\n";
+	cout << "Pilih nomor produk : \n";
+	cin >> pilih;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (pilih > 0 && pilih < jumlah_menu + 1)
+		{
+			int stcbaru;
+			cout << "------------------------------------------\n";
+			cout << "Masukkan stock baru : \n";
+			cin >> stcbaru;
+			mobil[pilih - 1].stock = stcbaru;
+			system("CLS");
+			tampilan_Menu();
+		}
+	}
+
+	cout << "\n\nApakah anda ingin mengulang ? (y/t): ";
+	cin >> perulangan;
+	if (perulangan == 'y' || perulangan == 'Y')
+	{
+		ulang = false;
+		system("CLS");
+		goto awal;
+
+	}
+	else if (perulangan == 't' || perulangan == 'T')
+	{
+		ulang = true;
+	}
+	else
+	{
+		cout << "\n\n Maaf input anda tidak valid\n";
+		goto awal;
+	}
+
+}
+
+void edit_harga()
+{
+awal:
+	char perulangan;
+	int pilih;
+	tampilan_Menu();
+	cout << "------------------------------------------\n";
+	cout << " Edit harga menu\n";
+	cout << "------------------------------------------\n";
+	cout << "Pilih nomor produk : \n";
+	cin >> pilih;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (pilih > 0 && pilih < jumlah_menu + 1)
+		{
+			int hrbaru;
+			cout << "------------------------------------------\n";
+			cout << "Masukkan Harga baru : \n";
+			cin >> hrbaru;
+			mobil[pilih - 1].harga[1] = hrbaru;
+			konversi(pilih-1);
+			system("CLS");
+			tampilan_Menu();
+		}
+	}
+
+	cout << "\n\nApakah anda ingin mengulang ? (y/t): ";
+	cin >> perulangan;
+	if (perulangan == 'y' || perulangan == 'Y')
+	{
+		ulang = false;
+		system("CLS");
+		goto awal;
+
+	}
+	else if (perulangan == 't' || perulangan == 'T')
+	{
+		ulang = true;
+	}
+	else
+	{
+		cout << "\n\n Maaf input anda tidak valid\n";
+		goto awal;
+	}
+
+}
+
+void cetak_struk() 
+{
+	int pilihhh;
+	memilih_hari();
+	system("CLS");
+	cout << "Daftar Pembeli\n";
+	for (int i = 0; i < yolo[x].jumlah_user; i++)
+	{
+		cout << i + 1 << ". " + yolo[x].pembeli[i].nama << endl;
+	}
+
+	cout << "Pilih Struk yang akan di cetak : ";
+	cin >> pilihhh;
+	cetak_sementara(x,pilihhh-1);
+}
+
+void tampilan_admin()
+{
+awal:
+	int pilih;
+	cout << "====================================\n";
+	cout << "====\t\tADMIN\t====\n";
+	cout << "====================================\n";
+	cout << "====\t\t  Menu\t\t====\n";
+	cout << "====================================\n";
+	cout << "= 1. Tambah Menu (Produk)\n";
+	cout << "= 2. Hapus Menu (Produk)\n";
+	cout << "= 3. Edit Stock Produk\n";
+	cout << "= 4. Edit Harga Produk\n";
+	cout << "= 5. Cetak data peserta\n";
+	cout << "= 7. Exit\n";
+	cout << "====================================\n";
+	cout << "= Pilih menu : ";
+	cin >> pilih;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+	}
+	else
+	{
+		if (pilih > 0 && pilih < 8)
+		{
+			if (pilih == 1)
+			{
+				system("CLS");
+
+				tambah_menu();
+			}
+			else if (pilih == 2)
+			{
+				system("CLS");
+
+				hapus();
+			}
+			else if (pilih == 3)
+			{
+				system("CLS");
+
+				edit_stock();
+			}
+			else if (pilih == 4)
+			{
+				system("CLS");
+				edit_harga();
+			}
+			else if (pilih == 5)
+			{
+				system("CLS");
+				cetak_struk();
+
+			}
+		}
+	}
+
+	if (ulang == true)
+	{
+		system("CLS");
+		goto awal;
+	}
+
+}
+
+int main()
+{
+	masuk_data();
+	baru:
+	tampilan_login();
+	if (pengurus == true)
+	{
+		system("CLS");
+		tampilan_loginkaryawan();
+		if (admin == true)
+		{
+			system("CLS");
+			tampilan_admin();
+		}
+	}
+	else if (user == true)
+	{
+		system("CLS");
+		memilih_hari();
+		ulangan:
+		memilih_produk();
+		memilih_paket();
+		if (ulang == true)
+		{
+			system("CLS");
+			goto ulangan;
+		}
+		else {
+			pembayaran();
+			stuk_sementara();
+			goto baru;
+		}
+
+	}
+
+
+
+	return 0;
+}
