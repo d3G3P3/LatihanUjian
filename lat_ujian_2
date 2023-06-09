@@ -1,0 +1,458 @@
+#include <iostream>
+#include <Windows.h>
+#include <iomanip>
+#include <fstream>
+#include <ctime>
+#include <string>
+#include <conio.h>
+#include <array>
+
+using namespace std;
+/// <summary>
+/// Untuk Makanan
+/// </summary>
+string makananst [15];
+int makananin [15][3];
+
+/// <summary>
+/// Untuk data pembelian
+/// </summary>
+string pembelianst[100][2];
+//[x][0]
+int pembelianin[100][4];
+void tampil()
+{
+	int jm = 0;
+	while (makananst[jm] != "")
+	{
+		jm++;
+	}
+	cout << "+-------------------------------------------------------+" << endl;
+	cout << "| No | Nama makanan |      Harga       | Stok | Terjual |" << endl;
+	cout << "+-------------------------------------------------------+" << endl;
+	for (int a = 0; a < jm; a++)
+	{
+		cout << "| " << setw(2) << left << a+1 << " | " 
+			 << setw(12) << left << makananst[a] << " | " 
+			 << setw(16) << left << makananin[a][0] << " | " 
+			 << setw(4) << left << makananin[a][1] << " | " 
+			 << setw(7) << left << makananin[a][2] << " | " << endl;
+		cout << "+-------------------------------------------------------+" << endl;
+	}
+}
+void inpst(char pila)
+{
+	if (pila == '1')
+	{
+		int a = 0, hrg1, st1;
+		string nama1;
+		while (makananst[a] != "")
+		{
+			a++;
+		}
+		cout << "Nama menu : "; cin >> nama1;
+		makananst[a] = nama1;
+		cout << "Harga : "; cin >> hrg1;
+		makananin[a][0] = hrg1;
+		cout << "Stok : "; cin >> st1;
+		makananin[a][1] = st1;
+	}
+	else if (pila == '2')
+	{
+
+	}
+}
+void updt(char pilb)
+{
+	if (pilb == '1')
+	{
+		int a, stok;
+		tampil();
+		cout << "Masukkan no yang di update : "; cin >> a;
+		cout << "Masukkan stok baru : "; cin >> stok;
+		makananin[a - 1][1] = makananin[a - 1][1] + stok;
+	}
+	else if (pilb == '2')
+	{
+
+	}
+}
+void hps(char pilc)
+{
+	if (pilc == '1')
+	{
+		int a = 0, b;
+		tampil();
+		while (makananst[a] != "")
+		{
+			a++;
+		}
+		cout << "Pilih nomor yang ingin di hapus : "; cin >> b;
+		makananst[b - 1] = "";
+		makananin[b - 1][0] = 0;
+		makananin[b - 1][1] = 0;
+		int d = a - b;
+		for (int c = 0; c < d; c++)
+		{
+			makananst[c + (b-1)] = makananst[c + b];
+			makananin[c + (b-1)][0] = makananin[c + b][0];
+			makananin[c + (b-1)][1] = makananin[c + b][1];
+			makananin[c + (b - 1)][2] = makananin[c + b][2];
+		}
+		makananst[a - 1] = "";
+		makananin[a - 1][0] = 0;
+		makananin[a - 1][1] = 0;
+		makananin[a - 1][2] = 0;
+	}
+	else if (pilc == '2')
+	{
+
+	}
+}
+void admin()
+{
+ft:
+	string pilih;
+	system("cls");
+	cout << "+---------------+" << endl;
+	cout << "| Pilihan Admin |" << endl;
+	cout << "+---------------+" << endl;
+	cout << "Pilihan : " << endl;
+	cout << "1.List Product" << endl;
+	cout << "2.Input Product" << endl;
+	cout << "3.Update stock" << endl;
+	cout << "4.Hapus stok" << endl;
+	cout << "5.Back" << endl;
+	cin >> pilih;
+	if (pilih == "1")
+	{
+		system("cls");
+		tampil();
+		system("pause");
+		goto ft;
+	}
+	else if (pilih == "2")
+	{
+	pt:
+		system("cls");
+		char a;
+		cout << "+------------+" << endl;
+		cout << "| Input Data |" << endl;
+		cout << "+------------+" << endl;
+		cout << "Pilihan : " << endl;
+		cout << "1.Makanan" << endl;
+		cout << "2.Minuman" << endl;
+		cout << "3.pilih acak untuk kembali" << endl;
+		cout << "Pilih : "; cin >> a;
+		if (a == '1' || a == '2')
+		{
+			system("cls");
+			inpst(a);
+			goto pt;
+		}
+		else
+		{
+			system("cls");
+			goto ft;
+		}
+	}
+	else if (pilih == "3")
+	{
+	up:
+		system("cls");
+		char b;
+		cout << "+-------------+" << endl;
+		cout << "| Update Data |" << endl;
+		cout << "+-------------+" << endl;
+		cout << "Pilihan : " << endl;
+		cout << "1.Makanan" << endl;
+		cout << "2.Minuman" << endl;
+		cout << "3.pilih acak untuk kembali" << endl;
+		cout << "Pilih : "; cin >> b;
+		if (b == '1' || b == '2')
+		{
+			system("cls");
+			updt(b);
+			goto up;
+		}
+		else
+		{
+			system("cls");
+			goto ft;
+		}
+	}
+	else if (pilih == "4")
+	{
+	ip:
+		system("cls");
+		char c;
+		cout << "+------------+" << endl;
+		cout << "| Hapus Data |" << endl;
+		cout << "+------------+" << endl;
+		cout << "Pilihan : " << endl;
+		cout << "1.Makanan" << endl;
+		cout << "2.Minuman" << endl;
+		cout << "3.pilih acak untuk kembali" << endl;
+		cout << "Pilih : "; cin >> c;
+		if (c == '1' || c == '2')
+		{
+			system("cls");
+			hps(c);
+			goto ip;
+		}
+		else
+		{
+			system("cls");
+			goto ft;
+		}
+	}
+	else
+	{
+
+	}
+}
+void struk(string nama)
+{
+	int a = 0, tot = 0;
+	while (pembelianst[a][0] != "")
+	{
+		a++;
+	}
+	ofstream cetakfile;
+	cetakfile.open("Notatiket.txt", ios::trunc);
+	cetakfile << "	 +------------------+" << endl;
+	cetakfile << "	 | Struk Pembayaran |" << endl;
+	cetakfile << "	 +------------------+" << endl;
+	cetakfile << " Nama Pembeli: " << nama << endl;
+	cetakfile << "+------------------------------------------------------------------------------+" << endl;
+	cetakfile << "| Nama barang | Jenis barang |      Harga       | Jumlah |       Nominal       |" << endl;
+	cetakfile << "+------------------------------------------------------------------------------+" << endl;
+	for (int b = 0; b < a; b++)
+	{
+		if (pembelianst[b][0] == nama)
+		{
+			cetakfile << "| " << setw(11) << left << makananst[pembelianin[b][0]] << " | "
+				<< setw(12) << left << pembelianst[b][1] << " | "
+				<< setw(16) << right << makananin[pembelianin[b][0]][0] << " | "
+				<< setw(6) << left << pembelianin[b][1] << " | "
+				<< setw(19) << right << pembelianin[b][2] << " |" << endl;
+			tot = tot + pembelianin[b][2];
+			cetakfile << "+------------------------------------------------------------------------------+" << endl;
+		}
+	}
+	cetakfile << "|                      Total Nominal                     | " << setw(19) << right << tot << " |" << endl;
+	cetakfile << "+------------------------------------------------------------------------------+" << endl;
+	cetakfile.close();
+}
+void beli(string nama,int hari)
+{
+aw:
+	system("cls");
+	char pil, ul;
+	int nom, jum, a = 0;
+	while (pembelianst[a][0] != "")
+	{
+		a++;
+	}
+	cout << "+-----------+" << endl;
+	cout << "| Pembelian |" << endl;
+	cout << "+-----------+" << endl;
+	cout << "Pilihan : " << endl;
+	cout << "1.Makanan" << endl;
+	cout << "2.Minuman" << endl;
+	cout << "Pilih : "; cin >> pil;
+	if (pil == '1')
+	{
+		system("cls");
+		tampil();
+		cout << "Pilih nomor makanan : "; cin >> nom;
+		cout << "Jumlah yang dibeli  : "; cin >> jum;
+		if (jum <= makananin[nom - 1][1])
+		{
+			cout << "Menambah pesanan atau tidak??"; cin >> ul;
+			pembelianst[a][0] = nama;
+			pembelianst[a][1] = "Makanan";
+			pembelianin[a][0] = nom - 1;
+			pembelianin[a][1] = jum;
+			makananin[nom - 1][1] = makananin[nom - 1][1] - jum;
+			makananin[nom - 1][2] = makananin[nom - 1][2] + jum;
+			pembelianin[a][2] = makananin[nom - 1][0] * jum;
+			pembelianin[a][3] = hari;
+			if (ul == 'y' || ul == 'Y')
+			{
+				goto aw;
+			}
+			else
+			{
+				struk(nama);
+			}
+		}
+		else
+		{
+			cout << "Stok tidak mencukupi" << endl;
+			system("pause");
+			goto aw;
+		}
+	}
+}
+void direktur()
+{
+	system("cls");
+	int q = 0, w = 0;
+	while (makananst[q] != "")
+	{
+		q++;
+	}
+	while (pembelianst[w][0] != "")
+	{
+		w++;
+	}
+	for (int a = 1; a < 4; a++)
+	{
+		int tot = 0;
+		cout << " Laporan hari ke-" << a << endl;
+		cout << "+---------------------------------------------------------------------+" << endl;
+		cout << "| No |  Nama barang  |      Harga       | Terjual |       Total       |" << endl;
+		cout << "+---------------------------------------------------------------------+" << endl;
+		for (int b = 0; b < q; b++)
+		{
+			int jumlah = 0, dpt = 0;
+			for (int c = 0; c < w; c++)
+			{
+				if (pembelianin[c][3] == a && makananst[pembelianin[c][0]] == makananst[b])
+				{
+					jumlah = jumlah + pembelianin[c][1];
+					dpt = dpt + pembelianin[c][2];
+				}
+			}
+			tot = tot + dpt;
+			cout << "| " << setw(2) << left << b + 1 << " | "
+				 << setw(13) << left << makananst[b] << " | "
+				 << setw(16) << left << makananin[b][0] << " | "
+				 << setw(7) << left << jumlah << " | "
+				 << setw(17) << right << dpt << " |" << endl;
+			cout << "+---------------------------------------------------------------------+" << endl;
+		}
+		cout << "|                Total Pendapatan                 | " << setw(17) << right << tot << " |" << endl;
+		cout << "+---------------------------------------------------------------------+" << endl;
+		cout << endl;
+		cout << endl;
+	}
+}
+int main()
+{
+awal:
+	char yt,pilih;
+	system("cls");
+	cout << "+---------------+" << endl;
+	cout << "| Pilihan Login |" << endl;
+	cout << "+---------------+" << endl;
+	cout << "Pilihan : " << endl;
+	cout << "1.Pembeli" << endl;
+	cout << "2.Admin" << endl;
+	cout << "3.Direktur" << endl;
+	cout << "Lainnya untuk keluar :" << endl;
+	cin >> pilih;
+	if (pilih == '1')
+	{
+		system("cls");
+		string nama;
+		int hari;
+		cout << "+---------+" << endl;
+		cout << "| Pembeli |" << endl;
+		cout << "+---------+" << endl;
+		cout << "Nama Pembeli :"; cin >> nama;
+		cout << "Pilih Hari Ke :"; cin >> hari;
+		if (hari <= 3 && hari > 0)
+		{
+			beli(nama,hari);
+			goto awal;
+		}
+		else
+		{
+			system("cls");
+			cout << "Hanya ada Hari ke-1 sampai ke-3" << endl;
+			system("Pause");
+			goto awal;
+		}
+	}
+	else if (pilih == '2')
+	{
+		system("cls");
+		string pas;
+		cout << "+-------------+" << endl;
+		cout << "| Login Admin |" << endl;
+		cout << "+-------------+" << endl;
+		cout << " Password : ";
+		char hid = _getch();
+		while (hid != '\r')
+		{
+			cout << "*";
+			pas += hid;
+			hid = _getch();
+		}
+		if (pas == "12345")
+		{
+			admin();
+			system("cls");
+			goto awal;
+		}
+		else
+		{
+			system("cls");
+			cout << "Password admin yang anda masukkan salah" << endl;
+			system("pause");
+			goto awal;
+		}
+	}
+	else if (pilih == '3')
+	{
+		system("cls");
+		string pasdir;
+		cout << "+----------------+" << endl;
+		cout << "| Login Direktur |" << endl;
+		cout << "+----------------+" << endl;
+		cout << " Password : ";
+		char hiddir = _getch();
+		while (hiddir != '\r')
+		{
+			cout << "*";
+			pasdir += hiddir;
+			hiddir = _getch();
+		}
+		if (pasdir == "54321")
+		{
+			direktur();
+			system("pause");
+			system("cls");
+			goto awal;
+		}
+		else
+		{
+			system("cls");
+			cout << "Password direktur yang anda masukkan salah" << endl;
+			system("pause");
+			goto awal;
+		}
+	}
+	else 
+	{
+		cout << endl << endl;
+		cout << "						+--------------------+" << endl;
+		cout << "						| Yakin ingin Keluar |" << endl;
+		cout << "						+--+--------------+--+" << endl;
+		cout << "						   | Pilih (y/t)? |" << endl;
+		cout << "						   +--------------+" << endl;
+		cout << "						          "; cin >> yt;
+		cout << endl;
+		if (yt == 'Y' || yt == 'y') {
+			goto akhir;
+		}
+		if (yt == 'T' || yt == 't') {
+			goto awal;
+		}
+	}
+akhir:
+	system("cls");
+	return 0;
+}
