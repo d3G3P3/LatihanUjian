@@ -1,0 +1,963 @@
+#include <iostream>
+#include <conio.h>
+#include <Windows.h>
+#include <string>
+#include <iomanip>
+#include <fstream>
+#include <ctime>
+using namespace std;
+#pragma warning(disable: 4996)
+bool user, admin, direktur, ulang1;
+string pass;
+int anj = 0, b, c;
+int tahap_user, tahap_admin;
+int jumlahmenu1, jumlahmenu2;
+
+string menuawal1[3]
+{
+	"Bakso", "Mie Ayam", "Pangsit"
+};
+
+string menuawal2[3]
+{
+	"Es Teh", "Es Jeruk", "Es Buah"
+};
+
+int regoawal1[3]
+{
+	15000,10000, 5000
+};
+
+int regoawal2[3]
+{
+	3000,5000,8000
+};
+
+
+string password[2]
+{
+	"12345","98765"
+};
+
+struct pemesan
+{
+	string nama;
+	string maem[10];
+	string mimik[10];
+	int jummakanan[10];
+	int jumminuman[10];
+	int menuyangdipesan1;
+	int menuyangdipesan2;
+	int totalharga;
+	int pembayaran;
+};
+
+struct makanan
+{
+	string nama;
+	int harga;
+	int stock;
+	int total;
+	int terjual;
+};
+
+struct minuman
+{
+	string nama;
+	int harga;
+	int stock;
+	int total;
+	int terjual;
+
+};
+
+struct pesanan
+{
+	makanan satu[100];
+	minuman dua[100];
+	string hari;
+	int totalpenjualan;
+	pemesan user32[100];
+};
+pesanan asu;
+
+void dataawal()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		asu.satu[i].nama = menuawal1[i];
+		asu.dua[i].nama = menuawal2[i];
+
+		asu.satu[i].harga = regoawal1[i];
+		asu.dua[i].harga = regoawal2[i];
+
+		asu.satu[i].stock = 10;
+		asu.dua[i].stock = 10;
+
+	}
+	jumlahmenu1 = 3;
+	jumlahmenu2 = 3;
+}
+
+void tampilanawal()
+{
+	awal:
+	string input;
+	cout << "------------------------------------------\n";
+	cout << " Latihan Broo\n";
+	cout << "------------------------------------------\n";
+	cout << "pilih :\n";
+	cout << "1. Pembeli\n";
+	cout << "2. Karyawan\n";
+	cout << "------------------------------------------\n";
+	cout << "Pilih :\n";
+	cin >> input;
+	if (input == "1")
+	{
+		user = true;
+		admin = false;
+		direktur = false;
+	}
+	else if (input == "2")
+	{
+		user = false;
+	}
+	else
+	{
+		system("CLS");
+		cout << "Maaf input anda tidak sesuai\n\n\n";
+		goto awal;
+	}
+}
+
+void login_karyawan()
+{
+awal1:
+	char inpp;
+	cout << "------------------------------------------\n";
+	cout << " Login \n";
+	cout << "------------------------------------------\n";
+	cout << "Password : ";
+	while (true)
+	{
+		inpp= _getch();   // agar input tidak ditampikan di terminal
+
+
+		if (inpp == '\r')  //  \r itu merpukan tombol enter pada keyborad
+		{
+			break;
+		}
+		else if (inpp == '\b') // \b merupakan tombol backspace
+		{
+			if (pass.length() > 0)
+			{
+				pass.pop_back(); //untuk menghapus karakter terakhir
+				cout << "\b \b";
+			}
+		}
+		else
+		{
+			pass.push_back(inpp); //setiap char yang dimasukkan atau diinputkan akan dipindahkan ke variabel pass
+			cout << "*";
+		}
+	}
+	if (pass == password[0])
+	{
+		admin = true;
+		direktur = false;
+		user = false;
+		system("CLS");
+		cout << "Login sebagai Admin\n";
+		Sleep(2000);
+		pass = "";
+		system("CLS");
+	}
+	else if (pass == password[1])
+	{
+		admin = false;
+		direktur = true;
+		user = false;
+		system("CLS");
+		cout << "Login sebagai Direktur\n";
+		Sleep(2000);
+		pass = "";
+		system("CLS");
+	}
+	else
+	{
+		system("CLS");
+		cout << " Maaf password salah \n";
+		cout << " Silahkan masukkan password lagi  \n\n\n";
+		pass = "";
+		goto awal1;
+	}
+}
+
+void tampil_menu()
+{
+	cout << "----------------------------------------\n";
+	cout << "Menu  \n";
+	cout << "----------------------------------------\n";
+	cout << "Makanan : \n\n";
+	cout << setw(35) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+	for (int i = 0; i < jumlahmenu1; i++)
+	{
+		cout << i+1<<". " << setw(32) << left << asu.satu[i].nama << "Rp " << setw(9) << left << asu.satu[i].harga << setw(3) << left << asu.satu[i].stock << endl;
+	}
+	cout << "----------------------------------------\n";
+	cout << "Minuman : \n\n";
+	cout << setw(35) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+	for (int i = 0; i < jumlahmenu2; i++)
+	{
+		cout << i + 1 << ". " << setw(32) << left << asu.dua[i].nama << "Rp " << setw(9) << left << asu.dua[i].harga << setw(3) << left << asu.dua[i].stock << endl;
+	}
+	cout << "\n\n";
+}
+
+void stuk(int a, int b, int c)
+{
+	int selisih;
+	cout << "======================================================" << endl;
+	cout << "                       Pembayaran                     " << endl;
+	cout << "======================================================" << endl;
+	cout << "= " << asu.user32[a].nama << endl;
+	cout << "======================================================" << endl;
+	cout << "=                      Pesanan                       =" << endl;
+	cout << "======================================================" << endl;
+	cout << "Makanan : \n";
+	for (int i = 0; i < b; i++)
+	{
+		cout << setw(30) << left << asu.user32[a].maem[i] << asu.user32[a].jummakanan[i] << endl;
+	}
+	cout << "\n\nMinuman : \n";
+	for (int i = 0; i < c; i++)
+	{
+		cout << setw(30) << left << asu.user32[a].mimik[i] << asu.user32[a].jumminuman[i] << endl;
+	}
+	cout << "\n\nTotal : Rp" << asu.user32[a].totalharga << endl;
+	cout << "Nominal : Rp " << asu.user32[a].pembayaran << endl;
+	cout << "----------------------------------------\n";
+	cout << "Kembalian : Rp " << asu.user32[a].pembayaran - asu.user32[a].totalharga << endl;
+	
+}
+
+void pembayaran(int a, int b, int c)
+{
+	int selisih;
+	cout << "======================================================" << endl;
+	cout << "                       Pembayaran                     " << endl;
+	cout << "======================================================" << endl;
+	cout << "= " << asu.user32[a].nama << endl;
+	cout << "======================================================" << endl;
+	cout << "=                      Pesanan                       =" << endl;
+	cout << "======================================================" << endl;
+	cout << "Makanan : \n";
+	for (int i = 0; i < b; i++)
+	{
+		cout << setw(30) << left << asu.user32[a].maem[i]  << asu.user32[a].jummakanan[i]<<endl;
+	}
+	cout << "\n\nMinuman : \n";
+	for (int i = 0; i < c; i++)
+	{
+		cout << setw(30) << left << asu.user32[a].mimik[i] << asu.user32[a].jumminuman[i] << endl;
+	}
+	cout << "\n\nTotal : " << asu.user32[a].totalharga<<endl;
+	ulang1:
+	cout << "======================================================" << endl;
+	cout << "Masukkan nominal : Rp";
+	cin >> asu.user32[a].pembayaran;
+	cout << "======================================================" << endl;
+	if (asu.user32[a].pembayaran >= asu.user32[a].totalharga)
+	{
+		selisih = asu.user32[a].pembayaran - asu.user32[a].totalharga;
+		if (selisih > 0)
+		{
+			cout << "Silahkan ambil kembalian anda : Rp" << selisih << endl;
+
+		}
+		else
+		{
+			cout << "Uang anda pas\n";
+		}
+		a++;
+
+	}
+	else
+	{
+		system("CLS");
+		cout << "Maaf uang anda kurang " << endl;
+		cout << "Masukkan nomial yang sesuai dengan harga\n\n";
+		goto ulang1;
+	}
+	
+
+}
+
+void tampilan_user(int a)
+{
+	int b = 0,c = 0;
+	awal:
+	
+	int pilih, pilih1,jumlah;
+	tampil_menu();
+	cout << "Pilih menu (makanan atau minuman) : ";
+	cin >> pilih;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+
+	}
+	else
+	{
+		if (pilih < 1 || pilih > 2)
+		{
+			system("CLS");
+			cout << "Maaf Input anda tidak valid\n";
+			cout << "Silahkan pilih lagi dengan benar \n\n";
+			goto awal;
+		}
+	}
+	cout << "Pilih no menu (nomor makanan atau minuman) : ";
+	cin >> pilih1;
+	if (pilih == 1)
+	{
+		if (cin.fail())
+		{
+			system("CLS");
+			cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+			cin.clear();  //untuk menghapus status error pada cin
+			cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+			goto awal;
+
+		}
+		else
+		{
+			if (pilih1 < 1 || pilih1 > jumlahmenu1)
+			{
+				system("CLS");
+				cout << "Maaf Input anda tidak valid\n";
+				cout << "Silahkan pilih lagi dengan benar \n\n";
+				goto awal;
+			}
+		}
+	}
+	else if (pilih == 2)
+	{
+		if (cin.fail())
+		{
+			system("CLS");
+			cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+			cin.clear();  //untuk menghapus status error pada cin
+			cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+			goto awal;
+
+		}
+		else
+		{
+			if (pilih1 < 1|| pilih1 > jumlahmenu2)
+			{
+				system("CLS");
+				cout << "Maaf Input anda tidak valid\n";
+				cout << "Silahkan pilih lagi dengan benar \n\n";
+				goto awal;
+			}
+		}
+	}
+	cout << " Jumlah yang ingin dipesan : ";
+	cin >> jumlah;
+	if (pilih == 1)
+	{
+		if (jumlah < asu.satu[pilih1 - 1].stock)
+		{
+			asu.user32[a].maem[b] = asu.satu[pilih1 - 1].nama;
+			asu.user32[a].jummakanan[b] = jumlah;
+			asu.satu[pilih1 - 1].total += (jumlah * asu.satu[pilih1 - 1].harga);
+			//asu.user32[a].totalharga += asu.satu[pilih1 - 1].total;
+			b++;
+			asu.user32[a].menuyangdipesan1 = b;
+			asu.satu[pilih1 - 1].stock -= jumlah;
+			asu.satu[pilih1 - 1].terjual += jumlah;
+			asu.user32[a].totalharga = asu.satu[pilih1 - 1].terjual * asu.satu[pilih1 - 1].harga;
+		}
+		else if (jumlah >= asu.satu[pilih1 - 1].stock)
+		{	
+			system("CLS");
+			cout << "Maaf stock tidak tersedia\n\n";
+			goto awal;
+		}
+	}
+	else if (pilih == 2)
+	{
+		if (jumlah < asu.dua[pilih1 - 1].stock)
+		{
+			asu.user32[a].mimik[c] = asu.dua[pilih1 - 1].nama;
+			asu.user32[a].jumminuman[c] = jumlah;
+			asu.dua[pilih1 - 1].total += (jumlah * asu.dua[pilih1 - 1].harga);
+			//asu.user32[a].totalharga += asu.dua[pilih1 - 1].total;
+			c++;
+			asu.user32[a].menuyangdipesan1 = b;
+			asu.dua[pilih1 - 1].stock -= jumlah;
+			asu.dua[pilih1 - 1].terjual += jumlah;
+			asu.user32[a].totalharga = asu.dua[pilih1 - 1].terjual * asu.dua[pilih1 - 1].harga;
+		}
+		else if (jumlah >= asu.dua[pilih1 - 1].stock)
+		{
+			system("CLS");
+			cout << "Maaf stock tidak tersedia\n\n";
+			goto awal;
+		}
+	}
+		awal1:
+	char ulang;
+	cout << "Apakah anda ingin input lagi (y/t)??  ";
+	cin >> ulang;
+	if (ulang == 'y' || ulang == 'Y')
+	{
+		
+		
+		system("CLS");
+		goto awal;
+	}
+	else if (ulang == 't' || ulang == 'T')
+	{
+		cout << "----------------------------------------\n";
+		cout << "Atas nama: \n";
+		cin.ignore();
+		getline(cin, asu.user32[a].nama);
+		system("CLS");
+		pembayaran(a,b,c);
+		Sleep(3000);
+		system("CLS");
+		stuk(a, b, c);
+		Sleep(5000);
+		system("CLS");
+
+	}
+	
+}
+
+void ganti_stock()
+{
+awal:
+	char pilih;
+	int a;
+	cout << "----------------------------------------\n";
+	cout << "Pilih menu: \n";
+	cout << "1. Makanan\n";
+	cout << "2. Minuman\n";
+	cout << "----------------------------------------\n";
+	cout << "Pilih : \n";
+	cin >> pilih;
+	if (pilih == '1')
+	{
+		int a;
+		cout << "----------------------------------------\n";
+		cout << "Makanan : \n\n";
+		cout << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+		for (int i = 0; i < jumlahmenu1; i++)
+		{
+			cout << setw(20) << left << asu.satu[i].nama << "Rp " << setw(9) << left << asu.satu[i].harga << setw(3) << left << asu.satu[i].stock << endl;
+		}
+		cout << "----------------------------------------\n";
+		cout << "pilih yang mau di edit (1,2,3,... : ";
+		cin >> a;
+		cout << asu.satu[a - 1].nama << endl;
+		cout << "Masukkan stock : ";
+		cin >> asu.satu[a - 1].stock;
+	}
+	else if (pilih == '2')
+	{
+		cout << "----------------------------------------\n";
+		cout << "Minuman : \n\n";
+		cout << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+		for (int i = 0; i < jumlahmenu2; i++)
+		{
+			cout << setw(20) << left << asu.dua[i].nama << "Rp " << setw(9) << left << asu.dua[i].harga << setw(3) << left << asu.dua[i].stock << endl;
+		}
+		cout << "----------------------------------------\n";
+		cout << "pilih yang mau di edit (1,2,3,... : ";
+		cin >> a;
+		cout << asu.dua[a - 1].nama << endl;
+		cout << "Masukkan stock : ";
+		cin >> asu.dua[a - 1].stock;
+	}
+awal1:
+	char ulang;
+	cout << "Apakah anda ingin input lagi (y/t)??  ";
+	cin >> ulang;
+	if (ulang == 'y' || ulang == 'Y')
+	{
+		system("CLS");
+		ulang1 = false;
+		goto awal;
+	}
+	else if (ulang == 't' || ulang == 'T')
+	{
+		system("CLS");
+		ulang1 = true;
+		cout << "----------------------------------------\n";
+		cout << "Makanan : \n\n";
+		cout << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+		for (int i = 0; i < jumlahmenu1; i++)
+		{
+			cout << setw(20) << left << asu.satu[i].nama << "Rp " << setw(9) << left << asu.satu[i].harga << setw(3) << left << asu.satu[i].stock << endl;
+		}
+		cout << "----------------------------------------\n";
+		cout << "Minuman : \n\n";
+		cout << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+		for (int i = 0; i < jumlahmenu2; i++)
+		{
+			cout << setw(20) << left << asu.dua[i].nama << "Rp " << setw(9) << left << asu.dua[i].harga << setw(3) << left << asu.dua[i].stock << endl;
+		}
+		Sleep(3000);
+	}
+
+
+}
+
+void tampilan_edit()
+{
+	awal:
+	char pilih;
+	cout << "----------------------------------------\n";
+	cout << "Pilih menu: \n";
+	cout << "1. Makanan\n";
+	cout << "2. Minuman\n";
+	cout << "----------------------------------------\n";
+	cout << "Pilih : \n";
+	cin >> pilih;
+	if (pilih == '1')
+	{
+		cout << "\nMasukkan nama makanan : ";
+		cin >> asu.satu[jumlahmenu1].nama;
+		cout << "----------------------------------------\n";
+		cout << "Masukkan harga : Rp ";
+		cin >> asu.satu[jumlahmenu1].harga;
+		cout << "----------------------------------------\n";
+		cout << "Masukkan stock : ";
+		cin >> asu.satu[jumlahmenu1].stock;
+		jumlahmenu1++;
+	}
+	else if (pilih == '2')
+	{
+		cout << "\nMasukkan nama makanan : ";
+		cin >> asu.dua[jumlahmenu2].nama;
+		cout << "----------------------------------------\n";
+		cout << "Minuman harga : Rp ";
+		cin >> asu.dua[jumlahmenu2].harga;
+		cout << "----------------------------------------\n";
+		cout << "Masukkan stock : ";
+		cin >> asu.dua[jumlahmenu2].stock;
+		jumlahmenu2++;
+	}
+	awal1:
+	char ulang;
+	cout << "Apakah anda ingin input lagi (y/t)??  ";
+	cin >> ulang;
+	if (ulang == 'y' || ulang == 'Y')
+	{
+		system("CLS");
+		
+		goto awal;
+		ulang1 = false;
+	}
+	else if (ulang == 't' || ulang == 'T')
+	{
+		system("CLS");
+		ulang1 = true;
+	}
+
+
+}
+
+void cetaklist()
+{
+	ofstream myfile;
+	myfile.open("Stock pada Dapur.txt", ios::trunc);
+	myfile << "----------------------------------------\n";
+	myfile << "Menu  \n";
+	myfile << "----------------------------------------\n";
+	myfile << "Makanan : \n\n";
+	myfile << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+	for (int i = 0; i < jumlahmenu1; i++)
+	{
+		myfile << setw(20) << left << asu.satu[i].nama << "Rp " << setw(9) << left << asu.satu[i].harga << setw(3) << left << asu.satu[i].stock << endl;
+	}
+	myfile << "----------------------------------------\n";
+	myfile << "Minuman : \n\n";
+	myfile << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+	for (int i = 0; i < jumlahmenu2; i++)
+	{
+		myfile << setw(20) << left << asu.satu[i].nama << "Rp " << setw(9) << left << asu.satu[i].harga << setw(3) << left << asu.satu[i].stock << endl;
+	}
+	myfile << "\n\n";
+	myfile.close();
+}
+
+void urutan1(int a, int b)
+{
+	for (int i = a; i < b - a; i++)
+	{
+		for (int j = a; j < b - a; j++)
+		{
+			string ns;
+			int hars, sts;
+			ns = asu.satu[j].nama;
+			hars = asu.satu[j].harga;
+			sts = asu.satu[j].stock;
+
+			asu.satu[j].nama = asu.satu[j + 1].nama;
+			asu.satu[j].harga = asu.satu[j + 1].harga;
+			asu.satu[j].stock = asu.satu[j + 1].stock;
+
+			asu.satu[j + 1].nama = ns;
+			asu.satu[j + 1].harga = hars;
+			asu.satu[j + 1].stock = sts;
+
+		}
+	}
+}
+
+void urutan2(int a, int b)
+{
+	for (int i = a; i < b - a; i++)
+	{
+		for (int j = a; j < b - a; j++)
+		{
+			string ns;
+			int hars, sts;
+			ns = asu.dua[j].nama;
+			hars = asu.dua[j].harga;
+			sts = asu.dua[j].stock;
+
+			asu.dua[j].nama = asu.dua[j + 1].nama;
+			asu.dua[j].harga = asu.dua[j + 1].harga;
+			asu.dua[j].stock = asu.dua[j + 1].stock;
+
+			asu.dua[j + 1].nama = ns;
+			asu.dua[j + 1].harga = hars;
+			asu.dua[j + 1].stock = sts;
+
+		}
+	}
+}
+
+void hapus()
+{
+awal:
+	int a;
+	char pilih;
+	cout << "----------------------------------------\n";
+	cout << "Pilih menu: \n";
+	cout << "1. Makanan\n";
+	cout << "2. Minuman\n";
+	cout << "----------------------------------------\n";
+	cout << "Pilih : \n";
+	cin >> pilih;
+	if (pilih == '1')
+	{
+		
+		cout << "----------------------------------------\n";
+		cout << "Makanan : \n\n";
+		cout << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+		for (int i = 0; i < jumlahmenu1; i++)
+		{
+			cout << setw(20) << left << asu.satu[i].nama << "Rp " << setw(9) << left << asu.satu[i].harga << setw(3) << left << asu.satu[i].stock << endl;
+		}
+		cout << "----------------------------------------\n";
+		cout << "pilih yang mau di hapus (1,2,3,... : ";
+		cin >> a;
+		asu.satu[a - 1].nama = "";
+		asu.satu[a - 1].harga = 0;
+		asu.satu[a - 1].stock = 0;
+		urutan1(a - 1, jumlahmenu1);
+		jumlahmenu1 -= 1;
+		tampil_menu();
+		Sleep(2000);
+	}
+	else if (pilih == '2')
+	{
+		cout << "----------------------------------------\n";
+		cout << "Minuman : \n\n";
+		cout << setw(20) << left << "Nama" << setw(12) << left << "Harga" << "Stock \n";
+		for (int i = 0; i < jumlahmenu2; i++)
+		{
+			cout << setw(20) << left << asu.dua[i].nama << "Rp " << setw(9) << left << asu.dua[i].harga << setw(3) << left << asu.dua[i].stock << endl;
+		}
+		cout << "----------------------------------------\n";
+		cout << "pilih yang mau di edit (1,2,3,... : ";
+		cin >> a;
+		asu.dua[a - 1].nama = "";
+		asu.dua[a - 1].harga = 0;
+		asu.dua[a - 1].stock = 0;
+		urutan2(a - 1, jumlahmenu2);
+		jumlahmenu2 -= 1;
+		tampil_menu();
+		Sleep(3000);
+	}
+}
+
+void cetak_struk(int a)
+{
+	ofstream myfile;
+	myfile.open("Struct "+asu.user32[a].nama  + ".txt", ios::trunc);
+	int selisih;
+	myfile << "======================================================" << endl;
+	myfile << "                       Pembayaran                     " << endl;
+	myfile << "======================================================" << endl;
+	myfile << "= " << asu.user32[a].nama << endl;
+	myfile << "======================================================" << endl;
+	myfile << "=                      Pesanan                       =" << endl;
+	myfile << "======================================================" << endl;
+	myfile << "Makanan : \n";
+	for (int i = 0; i < asu.user32[a].menuyangdipesan1; i++)
+	{
+		myfile << setw(30) << left << asu.user32[a].maem[i] << asu.user32[a].jummakanan[i] << endl;
+	}
+	myfile << "\n\nMinuman : \n";
+	for (int i = 0; i < asu.user32[a].menuyangdipesan2; i++)
+	{
+		myfile << setw(30) << left << asu.user32[a].mimik[i] << asu.user32[a].jumminuman[i] << endl;
+	}
+	myfile << "\n\nTotal : Rp" << asu.user32[a].totalharga << endl;
+	myfile << "Nominal : Rp " << asu.user32[a].pembayaran << endl;
+	myfile << "----------------------------------------\n";
+	myfile << "Kembalian : Rp " << asu.user32[a].pembayaran - asu.user32[a].totalharga << endl;
+	myfile.close();
+}
+
+void tampil_struk(int a)
+{
+	int selisih;
+	cout << "======================================================" << endl;
+	cout << "                       Pembayaran                     " << endl;
+	cout << "======================================================" << endl;
+	cout << "= " << asu.user32[a].nama << endl;
+	cout << "======================================================" << endl;
+	cout << "=                      Pesanan                       =" << endl;
+	cout << "======================================================" << endl;
+	cout << "Makanan : \n";
+	for (int i = 0; i < asu.user32[a].menuyangdipesan1; i++)
+	{
+		cout << setw(30) << left << asu.user32[a].maem[i] << asu.user32[a].jummakanan[i] << endl;
+	}
+	cout << "\n\nMinuman : \n";
+	for (int i = 0; i < asu.user32[a].menuyangdipesan2; i++)
+	{
+		cout << setw(30) << left << asu.user32[a].mimik[i] << asu.user32[a].jumminuman[i] << endl;
+	}
+	cout << "\n\nTotal : Rp" << asu.user32[a].totalharga << endl;
+	cout << "Nominal : Rp " << asu.user32[a].pembayaran << endl;
+	cout << "----------------------------------------\n";
+	cout << "Kembalian : Rp " << asu.user32[a].pembayaran - asu.user32[a].totalharga << endl;
+}
+
+void tampilan_admin()
+{
+	menu1:
+	cout << "----------------------------------------\n";
+	cout << "Pilih Fungsi: \n";
+	cout << "1. Menambah menu\n";
+	cout << "2. Edit stock\n";
+	cout << "3. Hapus menu\n";
+	cout << "4. Cetak list menu dan stock\n";
+	cout << "5. Cetak struk\n";
+	cout << "6. Keluar\n";
+	cout << "----------------------------------------\n";
+	cout << "Pilih : \n";
+	cin >> tahap_admin;
+	if (tahap_admin == 1)
+	{
+		tampilan_edit();
+	}
+	else if (tahap_admin == 2)
+	{
+		ganti_stock();
+	}
+	else if (tahap_admin == 3)
+	{
+		hapus();
+	}
+	else if (tahap_admin == 4)
+	{
+		system("CLS");
+		tampil_menu();
+		cetaklist();
+		char ulang;
+		cout << "Apakah anda ingin kembali ke menu (y/t)??  ";
+		cin >> ulang;
+		if (ulang == 'y' || ulang == 'Y')
+		{
+			system("CLS");
+
+			goto menu1;
+			ulang1 = false;
+		}
+		else if (ulang == 't' || ulang == 'T')
+		{
+			system("CLS");
+			ulang1 = false;
+		}
+	}
+	else if (tahap_admin == 5)
+	{
+		menu3:
+		system("CLS");
+		for (int i = 0; i < anj; i++)
+		{
+			cout << i + 1 << "." << asu.user32[i].nama << endl;
+		}
+		int pilih4;
+		cout << "\n\n----------------------------------------\n";
+		cout << "Pilih struk pelanggan yang akan dicetak  (angka saja): \n";
+		cin >> pilih4;
+		system("CLS");
+		tampil_struk(pilih4-1);
+		cetak_struk(pilih4-1);
+		char ulang;
+		cout << "Apakah anda ingin kembali ke menu (y/t)??  ";
+		cin >> ulang;
+		if (ulang == 'y' || ulang == 'Y')
+		{
+			system("CLS");
+
+			goto menu3;
+			ulang1 = false;
+		}
+		else if (ulang == 't' || ulang == 'T')
+		{
+			system("CLS");
+			ulang1 = false;
+		}
+	}
+	else if (tahap_admin == 6)
+	{
+		ulang1 = false;
+	}
+}
+
+void laporan()
+{
+	cout << setw(30) << left << "Menu" << setw(10) << left << "|Terjual" << setw(10) << left << "|Tersedia" << "|Total penjualan\n\n\n" << endl;
+	for (int i = 0; i < jumlahmenu1; i++)
+	{
+		cout << setw(33) << left << asu.satu[i].nama << setw(10) << left << asu.satu[i].terjual << setw(10) << left << asu.satu[i].stock<< asu.satu[i].total << endl;
+		asu.totalpenjualan += asu.satu[i].total;
+	}
+	cout << "\n\n\n";
+	for (int i = 0; i < jumlahmenu2; i++)
+	{
+		cout << setw(33) << left << asu.dua[i].nama << setw(10) << left << asu.dua[i].terjual << setw(10) << left << asu.dua[i].stock << asu.dua[i].total << endl;
+		asu.totalpenjualan += asu.dua[i].total;
+	}
+	cout << "\n\n\n";
+	cout << "TOTAL PENJUALAN : " << asu.totalpenjualan;
+	Sleep(10000);
+}
+
+void cetakLK()
+{
+	time_t now = time(nullptr); // Mendapatkan waktu saat ini
+	tm* local_time = localtime(&now);
+	ofstream myfile;
+	myfile.open("Laporan.txt", ios::trunc);
+	
+	
+	myfile << "Laporan pada   "<< ctime(&now) << endl;
+	myfile << setw(30) << left << "Menu" << setw(10) << left << "|Terjual" << setw(10) << left << "|Tersedia" << "|Total penjualan\n\n\n" << endl;
+	for (int i = 0; i < jumlahmenu1; i++)
+	{
+		myfile << setw(33) << left << asu.satu[i].nama << setw(10) << left << asu.satu[i].terjual << setw(10) << left << asu.satu[i].stock << asu.satu[i].total << endl;
+	}
+	myfile << "\n\n\n";
+	for (int i = 0; i < jumlahmenu2; i++)
+	{
+		myfile << setw(33) << left << asu.dua[i].nama << setw(10) << left << asu.dua[i].terjual << setw(10) << left << asu.dua[i].stock << asu.dua[i].total << endl;
+	}
+	myfile << "\n\n\n";
+	myfile << "TOTAL PENJUALAN : " << asu.totalpenjualan;
+}
+
+void tampilan_direktur()
+{
+awal:
+	char pilih8;
+	cout << "----------------------------------------\n";
+	cout << "Fungsi: \n";
+	cout << "1. cetak laporan keuangan\n";
+	cout << "----------------------------------------\n";
+	cout << "Pilih : \n";
+	cin >> pilih8;
+	if (cin.fail())
+	{
+		system("CLS");
+		cout << "Input tidak berupa angka, Silahkan coba lagi\n\n";
+		cin.clear();  //untuk menghapus status error pada cin
+		cin.ignore(); // untuk menghapus innput yang sudah tersimpan
+		goto awal;
+
+	}
+	else
+	{
+		if (pilih8 == '1')
+		{
+			system("CLS");
+			laporan();
+			cetakLK();
+		}
+		else
+		{
+			system("CLS");
+			cout << "Maaf Input anda tidak valid\n";
+			cout << "Silahkan pilih lagi dengan benar \n\n";
+			goto awal;
+		}
+	}
+}
+
+int main()
+{
+	anj = 0;
+	dataawal();
+	taek:
+	tampilanawal();
+	if (user == true && admin == false && direktur == false)
+	{
+		system("CLS");
+		tampilan_user(anj);
+		anj++;
+		goto taek;
+	}
+	else if (user == false)
+	{
+		system("CLS");
+		login_karyawan();
+		if (admin == true)
+		{
+			ulang:
+			system("CLS");
+			tampilan_admin();
+			if (ulang1 == true)
+			{
+				system("CLS");
+				goto ulang;
+			}
+			else
+			{
+				goto taek;
+			}
+		}
+		else if (direktur == true)
+		{
+			system("CLS");
+			tampilan_direktur();
+			
+		}
+
+	}
+	return 0;
+}
